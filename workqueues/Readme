@@ -1,0 +1,65 @@
+Workqueue in Linux Kernel
+
+Work queues are a different form of deferring work. Work queues defer work into a kernel thread,this bottom half always runs in the process context. 
+Because workqueue is allowing users to create a kernel thread and bind work to the kernel thread. 
+So, this will run in the process context and the work queue can sleep.
+
+There are two ways to implement Workqueue in the Linux kernel.
+1.Using global workqueue (Static / Dynamic)
+2.Creating Own workqueue
+
+Initialize work using Static Method
+
+    DECLARE_WORK(name, void (*func)(void *))
+    name: The name of the “work_struct” structure that has to be created.
+    func: The function to be scheduled in this workqueue.
+
+    
+Initialize work using Dynamic Method
+    INIT_WORK(work,work_fn)
+    name: The name of the “work_struct” structure that has to be created.
+    func: The function to be scheduled in this workqueue.
+
+Schedule work to the Workqueue
+    int schedule_work( struct work_struct *work );
+    work - job to be done
+    Returns zero if work was already on the kernel-global workqueue and non-zero otherwise.
+
+    Scheduled_delayed_work
+        int scheduled_delayed_work( struct delayed_work *dwork, unsigned long delay );
+        dwork - job to be done
+        delay - number of jiffies to wait or 0 for immediate execution
+
+
+Delete work from workqueue
+    To flush the kernel-global work queue, call flush_scheduled_work.
+        void flush_scheduled_work( void );
+    To flush a particular work item and block until the work is complete, you can make a call to
+        int flush_work( struct work_struct *work );
+
+create our own Workqueue
+    Workqueues are created through a macro called create_workqueue, which returns a workqueue_struct reference. 
+    You can remove this workqueue later (if needed) through a call to the destroy_workqueue function
+        struct workqueue_struct *create_workqueue( name );
+        void destroy_workqueue( struct workqueue_struct * );
+    
+    #define create_workqueue(name)                    
+        alloc_workqueue("%s", WQ_MEM_RECLAIM, 1, (name))
+    #define create_singlethread_workqueue(name)       
+        alloc_workqueue("%s", WQ_UNBOUND | WQ_MEM_RECLAIM, 1, (name))
+    
+    Allocate a workqueue with the specified parameters.
+        alloc_workqueue ( fmt, flags, max_active );     
+        fmt - printf format for the name of the workqueue        
+        flags - WQ_* flags        
+        max_active - max in-flight work items, 0 for default        
+        This will return Pointer to the allocated workqueue on success, NULL on failure.
+    
+    This will queue the work to the CPU on which it was submitted, but if the CPU dies it can be processed by another CPU.
+        int queue_work( struct workqueue_struct *wq, struct work_struct *work );
+        int queue_work_on( int cpu, struct workqueue_struct *wq, struct work_struct *work ); //to work on specific cpu
+        int queue_delayed_work( struct workqueue_struct *wq,struct delayed_work *dwork, unsigned long delay ); // to delay the wokr to specific time
+
+    
+
+
