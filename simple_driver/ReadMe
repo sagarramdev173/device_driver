@@ -1,0 +1,7 @@
+This is simple hello world driver program 
+
+where my_init is the function which gets invoked when we insert the driver.
+
+my_exit gets invoked while we remove driver
+
+
