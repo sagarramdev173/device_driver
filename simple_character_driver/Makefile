@@ -1,4 +1,4 @@
-TARGET = device_number
+TARGET = simple_character_driver
 
 obj-m += $(TARGET).o
 
@@ -9,9 +9,13 @@ all:
 
 clean:
 	make -C $(KDIR) M=$(PWD) clean
+	rm -f test
 
 install:
 	insmod $(TARGET).ko
 
 remove:
 	rmmod $(TARGET)
+
+test:
+	gcc -o test test.c
