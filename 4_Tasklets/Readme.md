@@ -1,3 +1,5 @@
+# Tasklets
+
 Tasklets are used to queue up work to be done at a later time. Tasklets can be run in parallel, but the same tasklet cannot be run on multiple CPUs at the same time.
  Also, each tasklet will run only on the CPU that schedules it, to optimize cache usage.
  Since the thread that queued up the tasklet must complete before it can run the tasklet, race conditions are naturally avoided
@@ -22,8 +24,7 @@ tasklet structure
         unsigned long data;           
     };
 
-here
-next - The next tasklet in line for scheduling.
+Here next - The next tasklet in line for scheduling.
 state -This state denotes Tasklet State. TASKLET_STATE_SCHED (Scheduled) or TASKLET_STATE_RUN (Running).
 count - It holds a nonzero value if the tasklet is disabled and 0 if it is enabled.
 func - This is the main function of the tasklet. Pointer to the function that needs to schedule for execution at a later time.
