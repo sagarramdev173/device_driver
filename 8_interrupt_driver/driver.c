@@ -1,4 +1,4 @@
-TODO: This driver is currently not useful it crashes need to fix 
+// TODO: This driver is currently not useful it crashes need to fix 
 
 #define DRIVER_PREFIX "demo_driver: " 
 #define pr_fmt(fmt) DRIVER_PREFIX  fmt
@@ -75,7 +75,7 @@ static struct file_operations fops = {
     .write = my_write
 };
 // Interrupt Handler
-# define MY_IRQ_NO 20
+# define MY_IRQ_NO 12
 static irqreturn_t demo_irq_handler(int irq, void *dev_id){
     pr_info("Shared IRQ: Interrupt Occurred");
     return IRQ_HANDLED;
@@ -114,7 +114,7 @@ INIT_FUNC driver_start(void){
         goto r_device;
     }
    
-    if(request_irq(MY_IRQ_NO, demo_irq_handler, IRQF_SHARED, "demo_driver", (void *)(demo_irq_handler))){
+    if(request_irq(MY_IRQ_NO, demo_irq_handler, IRQF_PROBE_SHARED, "demo_driver", NULL)){
         pr_info("cannot register IRQ \n");
         goto free_my_irq;
     }
@@ -122,7 +122,7 @@ INIT_FUNC driver_start(void){
     pr_info("device has been inserted \n");
     return SUCCESS
 free_my_irq:
-    free_irq(MY_IRQ_NO, (void *)(demo_irq_handler));  
+    free_irq(MY_IRQ_NO, NULL);  
 r_device:
     class_destroy(dev_class);
 r_class:
