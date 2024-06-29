@@ -1,21 +1,6 @@
 #define DRIVER_PREFIX "demo_driver: " 
 #define pr_fmt(fmt) DRIVER_PREFIX  fmt
 
-#include <linux/kernel.h>
-#include <linux/init.h>
-#include <linux/module.h>
-#include <linux/kdev_t.h>
-#include <linux/fs.h>
-#include <linux/cdev.h>
-#include <linux/device.h>
-#include<linux/slab.h>   
-#include<linux/uaccess.h>
-#include<linux/sysfs.h> 
-#include<linux/kobject.h>
-#include <linux/interrupt.h>
-#include <asm/io.h>
-#include <linux/workqueue.h>
-
 #include "list.h"
 
 
@@ -25,24 +10,35 @@
 #define SUCCESS 0;
 #define FAILURE -1;
 
-struct my_list *demo_list;
-static insert_nodes(struct my_list *demo_list,int no_of_nodes){
-    struct my_list *temp = NULL;
+demo_driver_list *temp  = NULL;
 
-    for(int i=0;i<no_of_nodes;i++){
-        temp = kmalloc(sizeof(struct my_list),GFP_KERNEL);
-        INIT_LIST_HEAD(&temp->list);
-        temp->data = i;
-        LIST_ADD_TAIL(demo_list,temp);
-    }
+
+
+static inline void* create_demo_drive_node(int data){
+    demo_driver_list *demo_node = kmalloc(sizeof(demo_driver_list),GFP_KERNEL); 
+    if(!demo_node){
+        pr_err("failed to allocate memory\n");
+        return NULL;
+    }   
+    INIT_NODE(&demo_node->list);
+    demo_node->data = data;
+    return (void *)demo_node;    
 }
+
+static inline void remove_demo_node(demo_driver_list *demo_node){
+    list_my_del(&demo_node->list);    
+    kfree(demo_node);
+}
+
 INIT_FUNC driver_start(void){    
-    demo_list = kmalloc(sizeof(struct my_list),GFP_KERNEL);
-    INIT_LIST_HEAD(&demo_list->list);
-    demo_list->data = 10;
-    insert_nodes(demo_list,10);
+    int data = 50;
+    temp = create_demo_drive_node(data);
+    if(temp == NULL){
+        pr_err("failed to allocate memory\n");
+        return FAILURE
+    }
+    pr_info("Data=%d\n",temp->data);
     
-    // pr_info("data %d\tnext = %p\tprev = %p\n",demo_list->data,demo_list->list.next,demo_list->list.prev);
     pr_info("device has been inserted \n");
     return SUCCESS
 }
@@ -50,7 +46,10 @@ INIT_FUNC driver_start(void){
 
 EXIT_FUNC driver_end(void){
 pr_info("device is being removed\n");
-kfree(demo_list);
+if(temp){
+    remove_demo_node(temp);
+    temp=NULL;    
+}
 pr_info("device has been removed\n");
 }
 
