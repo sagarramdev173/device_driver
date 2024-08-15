@@ -1,4 +1,4 @@
-TARGET=queue
+TARGET=driver
 obj-m += $(TARGET).o
 
 KDIR = /lib/modules/$(shell uname -r)/build
@@ -9,6 +9,6 @@ all:
 clean:	
 	make -C $(KDIR) M=$(shell pwd) clean
 load:all
-	insmod $(TARGET).ko
+	sudo insmod $(TARGET).ko
 remove:clean
-	rmmod $(TARGET).ko
+	sudo rmmod $(TARGET).ko
