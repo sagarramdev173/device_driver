@@ -4,13 +4,11 @@
 MODULE_LICENSE("GPL");
 
 static int __init my_init(void) {
-  printk("hello world\n");
+  printk("Hello world\n");
   return 0;
 }
 
-static void __exit my_exit(void) { 
-  printk("bye cruel wolrd\n"); 
-  }
+static void __exit my_exit(void) { printk("Bye cruel wolrd\n"); }
 
 module_init(my_init);
 module_exit(my_exit);
