@@ -70,7 +70,7 @@ static ssize_t demo_read(struct file *file, char __user *user_buf, size_t len,
 
   *off += count;
   ret = count;
-  if (*off > available)
+  if (*off >= available)
     data_ready = false;
 out:
   mutex_unlock(&buffer_lock);
