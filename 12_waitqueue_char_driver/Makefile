@@ -1,6 +1,6 @@
 obj-m += driver.o
 
-KDIR := /lib/modules/$(shell uname -r)/build
+KDIR := /mnt/kernel
 
 all:
 	make -C $(KDIR) M=$(PWD) modules

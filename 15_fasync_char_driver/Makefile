@@ -3,7 +3,7 @@ TEST = test
 
 obj-m += $(TARGET).o
 
-KERN_DIR = "/lib/modules/$(shell uname -r)/build"
+KERN_DIR := /mnt/kernel
 
 
 all:
@@ -19,4 +19,3 @@ install:
 
 remove:
 	sudo rmmod $(TARGET)
-
