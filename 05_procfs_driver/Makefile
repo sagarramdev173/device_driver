@@ -1,22 +1,9 @@
-TARGET = driver
-TEST = test
+obj-m += driver.o
 
-obj-m += $(TARGET).o
-
-KERN_DIR = "/lib/modules/$(shell uname -r)/build"
-
+KDIR ?= /mnt/kernel
 
 all:
-	make -C $(KERN_DIR) M=$(PWD) modules
-	gcc -o $(TEST) $(TEST).c
+	$(MAKE) -C $(KDIR) M=$(CURDIR) modules
 
 clean:
-	make -C $(KERN_DIR) M=$(PWD) clean
-	rm -f $(TEST)
-	
-install:
-	sudo insmod $(TARGET).ko
-
-remove:
-	sudo rmmod $(TARGET)
-
+	$(MAKE) -C $(KDIR) M=$(CURDIR) clean
